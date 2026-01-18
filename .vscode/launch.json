@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Users/josh/Desktop/stm32",
+      "program": "/Users/josh/Desktop/stm32/build/Debug/outDebug"
+    }
+  ]
+}
