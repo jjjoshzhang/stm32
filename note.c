@@ -14,7 +14,14 @@
     // GPIO B PB0-PB15
     // GPIO C PC13-PC15
     // GPIO D PD0-PD1
+
     // - Iputs
+
+    // Input pull-uo
+    // Input pull-down
+    // Input floating
+    // Analog input
+
     // - Outputs
     // Output push-pull
     // Output open-drain
