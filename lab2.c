@@ -11,7 +11,7 @@ int main(void)
 {
 
   // open the clock for GPIOC
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
   
   // initialize PC13 as output OD and 2MHz
   GPIO_InitTypeDef GPIO_InitStruct = {0};
