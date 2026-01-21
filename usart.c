@@ -37,6 +37,8 @@ USART_InitStruct.USART_Parity = USART_Parity_No;
 
 USART_Init(USART1, &USART_InitStruct);
 
+USART_Cmd(USART1,ENABLE);
+
 
 for(;;){
 
@@ -95,6 +97,10 @@ USART_InitStruct.USART_Parity = USART_Parity_No;
 
 
 USART_Init(USART1, &USART_InitStruct);
+
+USART_Cmd(USART1,ENABLE);
+
+
 
 
 for(;;){
