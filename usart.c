@@ -1,3 +1,6 @@
+
+void My_USART_sendBytes(USART_TypeDef* USARTx,uint8_t *pData, uint16_t size);
+
 #include "stm32f10x.h"
 
 int main(void){
@@ -41,7 +44,24 @@ USART_Cmd(USART1,ENABLE);
 
 
 for(;;){
+    if(USART_GetFlagStatus(USART1,USART_FLAG_TXE)== SET){ // if correct, transmit data register is empty 
 
+    }if(USART_GetFlagStatus(USART1,USART_FLAG_TC)== SET){// if correct, transmit compeleted 
+
+    }
+
+    USART_SendData(USART1,0x01); // send data to transmit data register
+
+}
+
+
+void My_USART_sendBytes(USART_TypeDef* USARTx,uint8_t *pData, uint16_t size){ // pdata is an array
+    for(uint_32 i =0; i<size; i++){
+        // wait till transmit register is empty
+        while(USART_GetFlagStatus(USART1,USART_FLAG_TXE)== RESET);
+            USART_SendData(USART1,pData[i]);
+    }
+    while(USART_GetFlagStatus(USART1,USART_FLAG_TC)== RESET);
 }
 }
 
