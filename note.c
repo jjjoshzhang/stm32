@@ -34,3 +34,7 @@
     // GPIO_WriteBit() sets an output pin to 1 or 0
     // GPIO_ReadOutputDataBit() What value did I(MCU) set on this output pin
     // (does not nesscary means what the pin itself currently is)
+
+
+    // USART
+    // Transmit and receive data
