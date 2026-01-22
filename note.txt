@@ -39,4 +39,4 @@
     Half Duplex sync (TX connects to TX send data or receive data at a time)
 
     say for printf function if we want accn want to write bytes to USART we need to override it 
-    bc it's inner functions r sometimes just a placehlder does not drive the UART hardware
+    bc it's inner functions r sometimes just a placehlder does not drive the UART hardware Z

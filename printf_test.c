@@ -73,6 +73,7 @@ int fputc(int ch, FILE* f){
 // print current time of stm32
 
 int main(void){
+    
     Delay_Init();
     My_USART_Init();
 
