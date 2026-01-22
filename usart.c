@@ -44,13 +44,14 @@ USART_Cmd(USART1,ENABLE);
 
 
 for(;;){
-    if(USART_GetFlagStatus(USART1,USART_FLAG_TXE)== SET){ // if correct, transmit data register is empty 
+    
+    // if(USART_GetFlagStatus(USART1,USART_FLAG_TXE)== SET){ // if correct, transmit data register is empty 
 
-    }if(USART_GetFlagStatus(USART1,USART_FLAG_TC)== SET){// if correct, transmit compeleted 
+   // }if(USART_GetFlagStatus(USART1,USART_FLAG_TC)== SET){// if correct, transmit compeleted 
 
-    }
+   // }
 
-    USART_SendData(USART1,0x01); // send data to transmit data register
+   // USART_SendData(USART1,0x01); // send uint16_t data to transmit data register
 
 }
 

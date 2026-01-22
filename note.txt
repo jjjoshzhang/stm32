@@ -37,3 +37,6 @@
     Focuses on Tx(Transmit) and Rx(receive)data
     Full Duplex (ur RX connects to another cpu's tx, ur TX connects to another cpus's rx)
     Half Duplex sync (TX connects to TX send data or receive data at a time)
+
+    say for printf function if we want accn want to write bytes to USART we need to override it 
+    bc it's inner functions r sometimes just a placehlder does not drive the UART hardware
