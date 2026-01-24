@@ -34,6 +34,7 @@
  
 
     USART
+    from least sig bit, can send 8-9 bits of data at most per go
     Focuses on Tx(Transmit) and Rx(receive)data
     Full Duplex (ur RX connects to another cpu's tx, ur TX connects to another cpus's rx)
     Half Duplex sync (TX connects to TX send data or receive data at a time)
@@ -46,6 +47,7 @@
     I2C
     allows mutilple communications between microcontroller and slave devices
     SCL(CLOCK) and SDA(DATA)
+    from most sig bit can send mutliple bytes in one go
     pull up resistors and open drain circuit 
     0 connectes to gnd 1 connects to pull up resistors 
     each cycle of SCL(clocks) will receive a bit of data on SDA
