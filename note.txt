@@ -40,3 +40,12 @@
 
     say for printf function if we want accn want to write bytes to USART we need to override it 
     bc it's inner functions r sometimes just a placehlder does not drive the UART hardware Z
+
+
+
+    I2C
+    allows mutilple communications between microcontroller and slave devices
+    SCL(CLOCK) and SDA(DATA)
+    pull up resistors and open drain circuit 
+    0 connectes to gnd 1 connects to pull up resistors 
+    each cycle of SCL(clocks) will receive a bit of data on SDA
