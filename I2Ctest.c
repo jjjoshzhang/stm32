@@ -17,6 +17,7 @@ int main(void){
 
 
 
+
     
 
 for(;;)
@@ -93,7 +94,7 @@ int My_I2C_SendBytes(I2C_TypeDef *I2Cx, uint8_t Addr, uint16_t Size){
 
   // reset AF flag
   I2C_ClearFlag(I2Cx,I2C_FlAG_AF);
-  // & 0xfe make it shift left 
+  // & 0xfe make it shift left(only needed for sending addr)
   // and we are sending addr now 
   I2C_SendData(I2Cx,Addr & 0xfe);
 
@@ -117,19 +118,41 @@ int My_I2C_SendBytes(I2C_TypeDef *I2Cx, uint8_t Addr, uint16_t Size){
   I2C_ReadRegister(I2Cx,I2C_Register_SR2);
 
 // send data
-  for(uint16_t i =0; i<SIZE; i++){
-    while(1){  
+  for(uint16_t i =0; i<SIZE; i++)
+  {
+    while(1)
+    {  
       if(I2C_GetFlagStatus(I2Cx,I2C_FlAG_AF) == SET)
 {
+  // last data was rejected (NACKed)
   I2C_GenerateSTOP(I2Cx,ENABLE);
+  return -2;
 }    
-if(I2C_GetFlagStatus(I2Cx,I2C_FlAG_TXE) == SET){
+// register is empty
+if(I2C_GetFlagStatus(I2Cx,I2C_FlAG_TXE) == SET)
+{
   break;
 } 
 }
-    
-
+I2C_SendData(I2Cx,pData[i]);
   }
+
+  while(1)
+  {
+    if(I2C_GetFlagStatus(I2Cx,I2C_FlAG_AF) == SET)
+{
+  // last data was rejected (NACKed)
+  I2C_GenerateSTOP(I2Cx,ENABLE);
+  return -2;
+} 
+    if(I2C_GetFlagStatus(I2Cx,I2C_FLAG_BTF)==SET)
+    {
+      break;
+    }
+  }
+
+  I2C_GenerateStop(I2Cx,ENABLE);
+  return 0; // data was sent sucessfully 
 
 
 }
