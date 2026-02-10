@@ -77,45 +77,53 @@ void My_I2C_Init(void){
 
 }
 
-
+// will return an int, 0 means success, -1 means cant find the addr, -2 means sent data got declined
 int My_I2C_SendBytes(I2C_TypeDef *I2Cx, uint8_t Addr, uint16_t Size){
+
   // wait till I2C bus becomes empty 
+  // 0 means free, 1 means busy
   while(I2C_GetFlagStatus(I2Cx,I2C_FLAG_BUSY)== SET);
 
-  // START 
+  // set start bit to 1  
   I2C_GenerateStart(I2Cx,ENABLE);
-  // wait till it's enabled, 0->1
+  // wait till start bit get sent, 0->1
   while(I2C_GetFlagStatus(I2Cx,I2C_FLAG_SB) == RESET);
   
   //addressing 
+
   // reset AF flag
   I2C_ClearFlag(I2Cx,I2C_FlAG_AF);
   // & 0xfe make it shift left 
+  // and we are sending addr now 
   I2C_SendData(I2Cx,Addr & 0xfe);
 
+// infinite loop bc the code executes faster than I2C hardware
   for(;;){
     if(I2C_GetFlagStatus(I2Cx,I2C_FLAG_ADDR) == SET){
       // addressing succesfully 
       break;
     } 
-    if(I2C_GetFlagStatus(I2Cx,I2C_FlAG_AF)== SET){
-      I2C_GenerateSTOP(I2Cx,ENABLE);
-      // addressing went wrong
-      return -1;
+    if(I2C_GetFlagStatus(I2Cx,I2C_FlAG_AF)== SET){  
+      I2C_GenerateSTOP(I2Cx,ENABLE); // send stop bit 
+      
+      return -1; // addressing went wrong, return -1
     }
   }
 
+
   // clear addr flag
+  // clear it here bc we know that addressing is succesful
   I2C_ReadRegister(I2Cx,I2C_Register_SR1);
   I2C_ReadRegister(I2Cx,I2C_Register_SR2);
+
 // send data
   for(uint16_t i =0; i<SIZE; i++){
-    while(1){
-      if(I2C_GetFlagStatus(I2Cx,I2C_FlAG_AF)== SET)
+    while(1){  
+      if(I2C_GetFlagStatus(I2Cx,I2C_FlAG_AF) == SET)
 {
   I2C_GenerateSTOP(I2Cx,ENABLE);
 }    
-if(I2C_GetFlagStatus(I2Cx,I2C_FlAG_TXE)== SET){
+if(I2C_GetFlagStatus(I2Cx,I2C_FlAG_TXE) == SET){
   break;
 } 
 }
