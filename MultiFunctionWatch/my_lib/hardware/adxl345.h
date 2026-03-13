@@ -3,7 +3,7 @@
   * @file    adxl345.h
   * @author  jjjoshzhang
   * @version V 1.0.0
-  * @date    3.12.2026
+  * @date    3.13.2026
   * @brief   adxl345 header file
   ******************************************************************************
   */

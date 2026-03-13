@@ -3,6 +3,8 @@
 #include "oled.h"
 #include "si2c.h"
 #include "delay.h"
+#include "w25q64.h"
+#include "string"
 
 SI2C_TypeDef si2c;
 OLED_TypeDef oled;
@@ -16,13 +18,18 @@ int main(void)
 	ds18b20_GPIO_Init();
 	My_SoftwareI2C_Init();
 	My_OLEDScreen_Init();
-	
+	W25Q64_SPI_Init();
+	W25Q64_LastTemp();
 
 
 
 	while(1)
 	{
+		uint8_t bytes[4] = {0};
 		float T = ds18b20_GetTemp();
+		ConvertFloattoBytes(T,bytes);
+		W25Q64_SaveBytes(bytes);
+
 		OLED_Clear(&oled);
 		OLED_SetCursor(&oled,7,20);
 		OLED_Printf(&oled,"TEMP: %.2fC",T);
@@ -54,4 +61,9 @@ void My_OLEDScreen_Init(void)
 	OLED_InitSturct.i2c_write_cb = i2c_write_bytes;
 	OLED_Init(&oled,&OLED_InitSturct);
 	
+}
+
+void ConvertFloattoBytes(float T, uint8_t *bytes)
+{
+    memcpy(bytes, &T, sizeof(float));
 }
