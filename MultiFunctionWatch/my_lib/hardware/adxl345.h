@@ -8,8 +8,8 @@
   ******************************************************************************
   */
 
-#ifndef __ADXL345_H
-#define __ADXL345_H
+#ifndef _ADXL345_H
+#define _ADXL345_H
 #include "stm32f10x.h"
 
 

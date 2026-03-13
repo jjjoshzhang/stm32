@@ -23,7 +23,7 @@ void My_SPI_MasterTransmitReceive(SPI_TypeDef *SPIx, const uint8_t *pDataTx, uin
 	if(Size == 0) return;
 	
 	// #1. 闭合总开关
-	SPI_Cmd(SPIx, ENABLE);
+
 	
 	// #2. 写入第一个字节
 	SPI_I2S_SendData(SPIx, pDataTx[0]);
@@ -48,5 +48,5 @@ void My_SPI_MasterTransmitReceive(SPI_TypeDef *SPIx, const uint8_t *pDataTx, uin
 	pDataRx[Size-1] = SPI_I2S_ReceiveData(SPIx);
 	
 	// #5. 断开总开关
-	SPI_Cmd(SPIx, DISABLE);
+
 }
