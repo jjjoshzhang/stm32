@@ -30,6 +30,7 @@
 
 void W25Q64_SPI_Init(void);
 void W25Q64_SaveBytes(uint8_t byte);
+void W25Q64_LoadFloat(float *value);
 void W25Q64_LastTemp(void);
 
 #endif

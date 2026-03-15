@@ -7,11 +7,14 @@
   * @brief   w25q64 source file
   ******************************************************************************
   */
-
-#include "w25q64.h"
-#include "delay.h"
+#include <string.h>
 #include "stm32f10x.h"
 #include "oled.h"
+#include "spi.h"
+#include "w25q64.h"
+#include "delay.h"
+
+
 
 void W25Q64_SPI_Init(void)
 {
@@ -74,40 +77,40 @@ void W25Q64_SPI_Init(void)
 } 
 
 
-void W25Q64_SaveBytes(uint8_t *byte)
+void APP_W25Q64_Save4Bytes(const uint8_t *byte)
 {
 	uint8_t buffer[10];
 	// 1. Write Enable
 	// Enable Commands
 	buffer[0] = 0x06;
 	// choose W25Q64
-	GPIO_WriteBit(GPIOA,GPIO_Pin_15,Bit_RESET);
-	APP_SPI_MasterTransmitReceive(SPI1,buffer, buffer,1);
+	GPIO_WriteBit(W25Q64_PORT,W25Q64_NSS,Bit_RESET);
+	APP_SPI_MasterTransmitReceive(W25Q64_SPIPORT,buffer, buffer,1);
 	// Close
-	GPIO_WriteBit(GPIOA,GPIO_Pin_15,Bit_SET);
+	GPIO_WriteBit(W25Q64_PORT,W25Q64_NSS,Bit_SET);
 	
 	// 2. Sector Erase
-	GPIO_WriteBit(GPIOA,GPIO_Pin_15,Bit_RESET);
+	GPIO_WriteBit(W25Q64_PORT,W25Q64_NSS,Bit_RESET);
 	// Erase Commands
 	buffer[0] = 0x20;
 	// 24-bit address
 	buffer[1] = 0x00;
 	buffer[2] = 0x00;
 	buffer[3] = 0x00;
-	APP_SPI_MasterTransmitReceive(SPI1,buffer, buffer,4);
-	GPIO_WriteBit(GPIOA,GPIO_Pin_15,Bit_SET);
+	APP_SPI_MasterTransmitReceive(W25Q64_SPIPORT,buffer, buffer,4);
+	GPIO_WriteBit(W25Q64_PORT,W25Q64_NSS,Bit_SET);
 	
 	// 3. Wait till Busy 1 -> 0 
 	while(1)
 	{
-		GPIO_WriteBit(GPIOA,GPIO_Pin_15,Bit_RESET);
+		GPIO_WriteBit(W25Q64_PORT,W25Q64_NSS,Bit_RESET);
 		// Send Read Register Commands
 		buffer[0] = 0x05;
-		APP_SPI_MasterTransmitReceive(SPI1,buffer, buffer,1);
+		APP_SPI_MasterTransmitReceive(W25Q64_SPIPORT,buffer, buffer,1);
 		// Read Register 1
 		buffer[0] = 0xff;
-		APP_SPI_MasterTransmitReceive(SPI1,buffer, buffer,1);
-		GPIO_WriteBit(GPIOA,GPIO_Pin_15,Bit_SET);
+		APP_SPI_MasterTransmitReceive(W25Q64_SPIPORT,buffer, buffer,1);
+		GPIO_WriteBit(W25Q64_PORT,W25Q64_NSS,Bit_SET);
 		
 		if((buffer[0] & 0x01) == 0) break;
 
@@ -116,13 +119,13 @@ void W25Q64_SaveBytes(uint8_t *byte)
 	// Enable Commands
 	buffer[0] = 0x06;
 	// choose W25Q64
-	GPIO_WriteBit(GPIOA,GPIO_Pin_15,Bit_RESET);
-	APP_SPI_MasterTransmitReceive(SPI1,buffer, buffer,1);
+	GPIO_WriteBit(W25Q64_PORT,W25Q64_NSS,Bit_RESET);
+	APP_SPI_MasterTransmitReceive(W25Q64_SPIPORT,buffer, buffer,1);
 	// Close
-	GPIO_WriteBit(GPIOA,GPIO_Pin_15,Bit_SET);
+	GPIO_WriteBit(W25Q64_PORT,W25Q64_NSS,Bit_SET);
 	
 	// 5. Page program
-	GPIO_WriteBit(GPIOA,GPIO_Pin_15,Bit_RESET);
+	GPIO_WriteBit(W25Q64_PORT,W25Q64_NSS,Bit_RESET);
 	// Program Commands
 	buffer[0] = 0x02;
 	// 24-bit address
@@ -135,20 +138,20 @@ void W25Q64_SaveBytes(uint8_t *byte)
     buffer[6] = byte[2];
     buffer[7] = byte[3];
 
-	APP_SPI_MasterTransmitReceive(SPI1,buffer, buffer,8);
-	GPIO_WriteBit(GPIOA,GPIO_Pin_15,Bit_SET);
+	APP_SPI_MasterTransmitReceive(W25Q64_SPIPORT,buffer, buffer,8);
+	GPIO_WriteBit(W25Q64_PORT,W25Q64_NSS,Bit_SET);
 	
 	// 6. Wait till Busy 1 -> 0 
 	while(1)
 	{
-		GPIO_WriteBit(GPIOA,GPIO_Pin_15,Bit_RESET);
+		GPIO_WriteBit(W25Q64_PORT,W25Q64_NSS,Bit_RESET);
 		// Send Read Register Commands
 		buffer[0] = 0x05;
-		APP_SPI_MasterTransmitReceive(SPI1,buffer, buffer,1);
+		APP_SPI_MasterTransmitReceive(W25Q64_SPIPORT,buffer, buffer,1);
 		// Read Register 1
 		buffer[0] = 0xff;
-		APP_SPI_MasterTransmitReceive(SPI1,buffer, buffer,1);
-		GPIO_WriteBit(GPIOA,GPIO_Pin_15,Bit_SET);
+		APP_SPI_MasterTransmitReceive(W25Q64_SPIPORT,buffer, buffer,1);
+		GPIO_WriteBit(W25Q64_PORT,W25Q64_NSS,Bit_SET);
 		
 		if((buffer[0] & 0x01) == 0) break;
 
@@ -157,29 +160,36 @@ void W25Q64_SaveBytes(uint8_t *byte)
 
 }
 
-
-void W25Q64_LoadFloat(float *value)
+void APP_W25Q64_LoadBytes(uint8_t bytes)
 {
-    uint8_t buffer[4];
-
-    GPIO_WriteBit(GPIOA,GPIO_Pin_15,Bit_RESET);
-
-    uint8_t cmd[4] = {0x03,0x00,0x00,0x00};
-    APP_SPI_MasterTransmitReceive(SPI1,cmd,cmd,4);
-
-    APP_SPI_MasterTransmitReceive(SPI1,buffer,buffer,4);
-
-    GPIO_WriteBit(GPIOA,GPIO_Pin_15,Bit_SET);
-
-    memcpy(value, buffer, sizeof(float));
+	uint8_t buffer[10];
+	// Read Data
+	GPIO_WriteBit(W25Q64_PORT,W25Q64_NSS,Bit_RESET);
+	// Read Data Commands
+	buffer[0] = 0x03;
+	// 24-bit address
+	buffer[1] = 0x00;
+	buffer[2] = 0x00;
+	buffer[3] = 0x00;
+	APP_SPI_MasterTransmitReceive(W25Q64_SPIPORT,buffer, buffer,4);
+	
+	APP_SPI_MasterTransmitReceive(W25Q64_SPIPORT,bytes, bytes,4);
+	
+	GPIO_WriteBit(W25Q64_PORT,W25Q64_NSS,Bit_SET);
+	
+	return buffer[0];
+	
 }
 
 
-void W25Q64_LastTemp(void)
+float LoadTemperature(void)
 {
-    float T; 
-    W25Q64_LoadFloat(&T);
-    OLED_SetCursor(&oled,7,20);
-    OLED_Printf(&oled,"TEMP: %.2fC",T);
-    OLED_SendBuffer(&oled);
+    uint8_t bytes[4];
+    float value;
+
+    APP_W25Q64_LoadBytes(bytes);
+
+    memcpy(&value, bytes, sizeof(float));
+
+    return value;
 }
